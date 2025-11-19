@@ -7,7 +7,7 @@ from utils import *
 
 # 1 unit cell = lambda/20
 c = 299_792_458  # m/s
-f = 10e9  # Hz
+f = 1e9  # Hz
 epsilon_r = 1
 lam = c / (np.sqrt(epsilon_r) * f)  # m
 
@@ -20,9 +20,11 @@ grid = np.zeros(shape=(num_cells, num_cells, num_cells), dtype=np.float32)
 xy = grid[:, :, num_cells // 2]
 
 # Let's make a linear array at lambda / 2 spacing
-xy[::10, num_cells // 2] = 1
+xy[::20, num_cells // 2] = 1
 # xy[num_cells // 2, ::10] = 1
+xy[::5, ::20] = 1
 x_coords, y_coords = np.nonzero(xy)
+print(f"There are {len(x_coords)} radiators.")
 
 plot_geometry_2d(xy)
 
@@ -59,7 +61,7 @@ def get_r_arr(x, y, z, target):
 # plot_geometry_2d(xy)
 # Now we compute the array pattern in one slice at far field.
 # say our target is 20 lambda away on the same plane as the array
-r = 20 * cells_per_lambda
+r = 200 * cells_per_lambda
 thetas = 720
 
 target_coords = np.zeros((thetas, 3), dtype=np.float32)
@@ -88,5 +90,4 @@ for t, target in enumerate(target_coords):
             * np.dot(k_vec(phi=0, theta=t * 2 * np.pi / thetas), get_r(x, y, 0, target))
         )
 
-print(AF)
 plot_AF(AF, theta_values)
